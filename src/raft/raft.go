@@ -89,8 +89,8 @@ const (
 	Follower = iota
 	Candidate
 	Leader
-	heartTime    = time.Second
-	heartTimeOut = time.Second * 3
+	heartTime    = time.Millisecond * 100
+	heartTimeOut = time.Second * 1
 )
 
 func (s state) String() string {
@@ -291,7 +291,7 @@ func (rf *Raft) ticker() {
 		rf.mu.Unlock()
 		// pause for a random amount of time between 50 and 350
 		// milliseconds.
-		ms := 50 + (rand.Int63() % 300)
+		ms := 200 + (rand.Int63() % 100)
 		time.Sleep(time.Duration(ms) * time.Millisecond)
 	}
 }
@@ -393,7 +393,7 @@ func (rf *Raft) freshNextSliceL() {
 	for i, _ := range rf.peers {
 		rf.nextIndex[i] = rf.log.nextLogIndex()
 		Debug(rf, DIndex, "%s update %s next idx %d", rf.Name(), getServerName(i), rf.log.nextLogIndex())
-		rf.matchIndex[i] = 0
+		rf.matchIndex[i] = -1
 	}
 }
 
