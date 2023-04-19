@@ -87,13 +87,13 @@ func (ck *Clerk) Op(key string, value string, op string) string {
 				ok = srv.Call("ShardKV.Op", &args, &reply)
 				if !ok {
 					ck.leader[gid] = int(nrand()) % len(servers)
-					continue
+					break
 				}
 
-				if ok && reply.Err == OK {
+				if reply.Err == OK {
 					return reply.Value
 				}
-				if ok && reply.Err == ErrWrongGroup {
+				if reply.Err == ErrWrongGroup {
 					Debug(nil, dErr, "WrongGroup: %v %v", reply.Err, ck.config.Num)
 					break
 				}
